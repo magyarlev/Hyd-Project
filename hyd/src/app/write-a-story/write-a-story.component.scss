@@ -1,0 +1,23 @@
+.write-a-story {
+  margin: 100px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  h1 {
+    text-align: center;
+    font-size: 3em;
+    word-spacing: 10px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    gap: 15px;
+    margin: 0 auto;
+    textarea {
+      height: 150px;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<section class="write-a-story">
+  <h1>Tell me about your day</h1>
+
+  <mat-button-toggle-group name="story-type" aria-label="story-type">
+    <mat-button-toggle value="good">Good day</mat-button-toggle>
+    <mat-button-toggle value="bad">Bad day</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <form #storyForm="ngForm">
+    <mat-form-field>
+      <mat-label>Write your story</mat-label>
+      <textarea matInput [(ngModel)]="story" name="story"></textarea>
+    </mat-form-field>
+  </form>
+</section>

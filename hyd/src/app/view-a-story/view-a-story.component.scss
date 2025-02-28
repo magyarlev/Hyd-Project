@@ -1,0 +1,17 @@
+.view-story {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 50px;
+  margin-top: 50px;
+  .story-wrapper {
+    font-size: 1.5em;
+    width: 500px;
+    text-align: center;
+  }
+
+  .btn-wrapper {
+    display: flex;
+    gap: 20px;
+  }
+}
