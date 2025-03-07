@@ -11,6 +11,7 @@ const corsOptions = {
   origin: "http://localhost:4200",
   optionsSuccessStatus: 204,
   methods: "GET, POST, PUT, DELETE",
+  credentials: true,
 };
 
 mongoose
@@ -52,7 +53,7 @@ app.post("/story", async (req: Request, res: Response) => {
       id: req.body.id,
       email: req.body.email,
       type: req.body.type,
-      story: req.body.story,
+      content: req.body.story,
     });
     const registeredStory = await newStory.save();
     res.status(200).json(registeredStory);
