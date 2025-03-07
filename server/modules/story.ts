@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 const storySchema = new Schema({
-  id: Number,
+  id: String,
   email: String,
   type: String,
-  story: String,
+  content: String,
 });
 
 export default mongoose.model("story", storySchema, "stories");
