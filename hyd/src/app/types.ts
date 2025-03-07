@@ -1,6 +1,14 @@
-export type Story = {
+export interface Story {
   id: string;
-  email: string;
   type: string;
-  story: string;
-};
+  content: string;
+}
+
+export interface StoryADMIN extends Story {
+  email: string;
+}
+
+export type StoryPOST = Omit<Story, 'id'>;
+export type StoryPUT = StoryPOST;
+
+export type StoryDELETE = Pick<Story, 'id'>;
