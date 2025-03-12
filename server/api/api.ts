@@ -1,9 +1,17 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 import Story from "../modules/story";
+import User from "../modules/users";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
 const db = "mongodb://localhost:27017/eventdb";
+export interface CustomRequest extends Request {
+  userId: string | JwtPayload;
+}
 
 mongoose
   .connect(db)
@@ -14,7 +22,87 @@ mongoose
     console.error(error);
   });
 
+export const verifyToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.headers.authorization) {
+    res.status(401).send("Unauthorized request");
+    throw new Error();
+  }
+  let token = req.headers.authorization.split(" ")[1];
+  if (token === "null") {
+    res.status(401).send("Unauthorized request");
+    throw new Error();
+  }
+
+  const secretKey = process.env.JWT_SECRET;
+  if (secretKey) {
+    let payload = jwt.verify(token, secretKey);
+    if (!payload) {
+      res.status(401).send("Unauthorized request");
+      throw new Error();
+    }
+    (req as CustomRequest).userId = payload as string;
+    next();
+  } else {
+    throw new Error("JWT key error.");
+  }
+};
+
+router.get("/", (req: Request, res: Response) => {
+  res.send("From API Route");
+});
+
 // USER API
+
+router.post("/register", async (req: Request, res: Response) => {
+  let userData = req.body;
+  let user = new User(userData);
+  try {
+    let savedUser = await user.save();
+    let payload = {
+      subject: savedUser._id,
+    };
+    const secretKey = process.env.JWT_SECRET;
+    if (secretKey) {
+      let token = jwt.sign(payload, secretKey);
+      res.status(200).send({ token });
+    } else {
+      throw new Error("JWT key error.");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).send("Something went wrong, please try again later.");
+  }
+});
+
+router.post("/login", async (req: Request, res: Response) => {
+  let userData = req.body;
+  try {
+    const foundUser = await User.findOne({ email: userData.email });
+    if (!foundUser) {
+      res.status(401).send("Invalid email");
+    } else if (foundUser.password !== userData.password) {
+      res.status(401).send("Invalid password");
+    } else {
+      let payload = {
+        subject: foundUser._id,
+      };
+      const secretKey = process.env.JWT_SECRET;
+      if (secretKey) {
+        let token = jwt.sign(payload, secretKey);
+        res.status(200).send({ token });
+      } else {
+        throw new Error("JWT key error.");
+      }
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).send("Something went wrong, please try again later.");
+  }
+});
 
 // STORY API
 
@@ -44,7 +132,7 @@ router.post("/story", async (req: Request, res: Response) => {
     const newStory = new Story({
       email: req.body.email,
       type: req.body.type,
-      content: req.body.story,
+      content: req.body.content,
     });
     const registeredStory = await newStory.save();
     res.status(200).json(registeredStory);
