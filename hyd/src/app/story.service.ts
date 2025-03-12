@@ -18,7 +18,7 @@ export class StoryService {
   }
 
   addStory(story: StoryPOST) {
-    return this.#httpClient.post<Story>(this.#storyUrl, story);
+    return this.#httpClient.post<void>(this.#storyUrl, story);
   }
 
   updateStory(story: StoryPUT) {
