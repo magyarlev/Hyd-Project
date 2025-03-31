@@ -1,5 +1,5 @@
-<div class="login-card">
-  <form class="login" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<div class="register-card">
+  <form class="register" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <mat-label>Enter your email</mat-label>
       <input
@@ -22,7 +22,7 @@
       }
     </mat-form-field>
     <span><a href="#">Forgot password?</a></span>
-    <button mat-raised-button type="submit">Login</button>
-    <span>Don't have an account? <a href="#">Signup</a></span>
+    <button mat-raised-button type="submit">Register</button>
+    <span>Have an account already? <a routerLink="login">Sign in</a></span>
   </form>
 </div>

@@ -22,6 +22,9 @@
     </mat-form-field>
     <span><a href="#">Forgot password?</a></span>
     <button mat-raised-button type="submit">Login</button>
-    <span>Don't have an account? <a href="#">Signup</a></span>
+    <span
+      >Don't have an account?
+      <a [routerLink]="['/auth', 'register']">Sign up</a></span
+    >
   </form>
 </div>
