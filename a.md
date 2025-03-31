@@ -1,0 +1,8 @@
+- HR témáju applikáció ami az olasz ismerősöm startup cégének készül
+- éppen összeállítok egy proof-of-concept mvp-t (minimum viable product) és ezt megbeszeszélések és igények alapján finomítjuk és dolgozzuk ki
+- amikor a cégen belüli tesztidőszak végén összeállt az összes feature és a cégben összegyűlt tapasztalattal ki tudjuk egészíteni a szoftvert akkor szeretne ezzel az appal a piacra menni a cégvezető.
+- ennek az applikációnak a mental health részét csinálom én.
+- ez egy anonim visszajelző rendszer ahol a céges észrevételeket vagy akár egyéni gondoloatokat meg lehet osztani.
+- ez a managementnek fontos mert kapnak feedbacket az alkalmazottaktól
+- másrészt az egyéni gondolatokat ha publikusra állítják akkor ehhez mások tudnak kapcsolódni és ki tudnak alakulni közös szerveződések vagy közös ügyek megvitatásához
+- pár hónapos projekt egyenlőre úgyhogy az ez utáni időre keresek magamnak munkát

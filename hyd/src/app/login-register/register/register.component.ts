@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,6 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-register',
@@ -24,11 +26,27 @@ import { RouterLink } from '@angular/router';
 })
 export class RegisterComponent {
   fb = inject(FormBuilder);
+  authService = inject(AuthService);
+  destroyRef = inject(DestroyRef);
   registerForm: FormGroup;
-  passwordError?: string;
 
   onSubmit() {
-    throw new Error('Method not implemented.');
+    if (this.registerForm.valid) {
+      this.authService
+        .registerUser({
+          email: this.registerForm.value.email,
+          password: this.registerForm.value.password,
+        })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (res) => {
+            localStorage.setItem('token', res.token);
+          },
+          error: (err) => {
+            console.error(err);
+          },
+        });
+    }
   }
 
   constructor() {
