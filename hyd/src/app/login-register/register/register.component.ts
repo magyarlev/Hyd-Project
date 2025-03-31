@@ -42,7 +42,7 @@ export class RegisterComponent {
         .subscribe({
           next: (res) => {
             localStorage.setItem('token', res.token);
-            this.#router.navigate(['/write-a-story']);
+            this.#router.navigate(['/login']);
           },
           error: (err) => {
             console.error(err);

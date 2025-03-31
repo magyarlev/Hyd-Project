@@ -1,9 +1,14 @@
 .view-story {
+  h1 {
+    text-align: center;
+    font-size: 3em;
+    word-spacing: 10px;
+  }
+  margin: 100px auto;
   display: flex;
   align-items: center;
   flex-direction: column;
   gap: 50px;
-  margin-top: 50px;
   .story-wrapper {
     font-size: 1.5em;
     background-color: antiquewhite;
