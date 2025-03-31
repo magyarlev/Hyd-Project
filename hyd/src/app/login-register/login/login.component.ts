@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../auth.service';
 import { User } from '../../types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -26,14 +26,15 @@ import { RouterLink } from '@angular/router';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  fb = inject(FormBuilder);
+  #fb = inject(FormBuilder);
   loginForm: FormGroup;
   #authService = inject(AuthService);
   passwordError?: string;
-  destroyRef = inject(DestroyRef);
+  #destroyRef = inject(DestroyRef);
+  #router = inject(Router);
 
   constructor() {
-    this.loginForm = this.fb.group({
+    this.loginForm = this.#fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
@@ -43,10 +44,11 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.#authService
         .loginUser(this.loginForm.value as User)
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(takeUntilDestroyed(this.#destroyRef))
         .subscribe({
           next: (res) => {
             localStorage.setItem('token', res.token);
+            this.#router.navigate(['/write-a-story']);
           },
           error: (err) => {
             this.passwordError = err;

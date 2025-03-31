@@ -8,7 +8,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -25,22 +25,24 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  fb = inject(FormBuilder);
-  authService = inject(AuthService);
-  destroyRef = inject(DestroyRef);
+  #fb = inject(FormBuilder);
+  #authService = inject(AuthService);
+  #destroyRef = inject(DestroyRef);
+  #router = inject(Router);
   registerForm: FormGroup;
 
   onSubmit() {
     if (this.registerForm.valid) {
-      this.authService
+      this.#authService
         .registerUser({
           email: this.registerForm.value.email,
           password: this.registerForm.value.password,
         })
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(takeUntilDestroyed(this.#destroyRef))
         .subscribe({
           next: (res) => {
             localStorage.setItem('token', res.token);
+            this.#router.navigate(['/write-a-story']);
           },
           error: (err) => {
             console.error(err);
@@ -50,7 +52,7 @@ export class RegisterComponent {
   }
 
   constructor() {
-    this.registerForm = this.fb.group({
+    this.registerForm = this.#fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });

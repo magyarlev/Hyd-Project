@@ -4,7 +4,6 @@ import api from "./api/api";
 
 const app = express();
 const port = 3000;
-const db = "mongodb://localhost:27017/how-is-your-day";
 
 const corsOptions = {
   origin: "http://localhost:4200",
