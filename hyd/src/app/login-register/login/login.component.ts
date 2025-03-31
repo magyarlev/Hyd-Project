@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../auth.service';
 import { User } from '../../types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
