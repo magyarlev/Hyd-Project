@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import Story from "../modules/story";
 import User from "../modules/users";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -58,9 +59,10 @@ router.get("/", (req: Request, res: Response) => {
 // USER API
 
 router.post("/register", async (req: Request, res: Response) => {
-  let userData = req.body;
-  let user = new User(userData);
   try {
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let user = new User({ email, password: hashedPassword });
     let savedUser = await user.save();
     let payload = {
       subject: savedUser._id,
@@ -79,13 +81,16 @@ router.post("/register", async (req: Request, res: Response) => {
 });
 
 router.post("/login", async (req: Request, res: Response) => {
-  let userData = req.body;
   try {
-    const foundUser = await User.findOne({ email: userData.email });
+    const { email, password } = req.body;
+    const foundUser = await User.findOne({ email });
     if (!foundUser) {
       res.status(401).send("Invalid email");
-    } else if (foundUser.password !== userData.password) {
-      res.status(401).send("Invalid password");
+    } else if (foundUser.password) {
+      const passwordMatch = await bcrypt.compare(password, foundUser.password);
+      if (!passwordMatch) {
+        res.status(401).send("Invalid password");
+      }
     } else {
       let payload = {
         subject: foundUser._id,
