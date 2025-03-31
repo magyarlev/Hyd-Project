@@ -1,13 +1,14 @@
 <section class="view-story">
   <article class="story-wrapper">
+    @if(story) {
     <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nemo labore
-      veniam corporis fugiat mollitia sit esse placeat assumenda modi?
+      {{ story.content }}
     </p>
+    }
   </article>
 
   <div class="btn-wrapper">
-    <button mat-raised-button>Good day</button>
-    <button mat-raised-button>Bad Day</button>
+    <button mat-raised-button (click)="getGoodDayStory()">Good day</button>
+    <button mat-raised-button (click)="getBadDayStory()">Bad Day</button>
   </div>
 </section>

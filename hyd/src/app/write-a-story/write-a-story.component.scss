@@ -10,18 +10,24 @@
     word-spacing: 10px;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-    gap: 15px;
+  .form-wrapper {
     margin: 0 auto;
-    textarea {
-      height: 150px;
-    }
-    .submit-btn {
-      align-self: center;
-      width: 50%;
+    width: 500px;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      mat-button-toggle-group {
+        max-width: fit-content;
+        align-self: center;
+      }
+      textarea {
+        height: 150px;
+      }
+      .submit-btn {
+        align-self: center;
+        width: 50%;
+      }
     }
   }
 }
