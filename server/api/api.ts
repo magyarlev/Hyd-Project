@@ -91,7 +91,6 @@ router.post("/login", async (req: Request, res: Response) => {
       if (!passwordMatch) {
         res.status(401).send("Invalid password");
       }
-    } else {
       let payload = {
         subject: foundUser._id,
       };
