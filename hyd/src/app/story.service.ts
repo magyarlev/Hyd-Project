@@ -7,7 +7,7 @@ import { Story, StoryADMIN, StoryDELETE, StoryPOST, StoryPUT } from './types';
 })
 export class StoryService {
   #httpClient = inject(HttpClient);
-  #storyUrl = `http://localhost:3000/story`;
+  #storyUrl = `http://localhost:3000/api/story`;
 
   getAllStories() {
     return this.#httpClient.get<StoryADMIN[]>(this.#storyUrl);
