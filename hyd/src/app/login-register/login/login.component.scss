@@ -1,0 +1,37 @@
+.login-register {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 100px;
+}
+
+.intro-text {
+  text-align: center;
+  align-self: center;
+  width: 60%;
+}
+
+.login-card {
+  width: 400px;
+  margin: 0 auto;
+  box-shadow: 1px 1px 3px #22a3dd;
+  padding: 20px;
+  border-radius: 15px;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    button {
+      background-color: #22a3dd;
+      color: white;
+      letter-spacing: 0.2em;
+    }
+  }
+  span {
+    align-self: center;
+  }
+}
+
+mat-form-field {
+  width: 100%;
+}

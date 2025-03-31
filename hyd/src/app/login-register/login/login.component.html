@@ -1,0 +1,27 @@
+<div class="login-card">
+  <form class="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Enter your email</mat-label>
+      <input
+        matInput
+        placeholder="example@example.com"
+        formControlName="email"
+        required
+      />
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+      <mat-error>Invalid email address</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Enter your password</mat-label>
+      <input matInput type="password" formControlName="password" required />
+      @if(passwordError) {
+      <mat-error>{{ passwordError }}</mat-error>
+      }
+    </mat-form-field>
+    <span><a href="#">Forgot password?</a></span>
+    <button mat-raised-button type="submit">Login</button>
+    <span>Don't have an account? <a href="#">Signup</a></span>
+  </form>
+</div>

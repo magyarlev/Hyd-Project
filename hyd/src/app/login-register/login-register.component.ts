@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-login-register',
-  imports: [MatButtonModule],
+  imports: [RouterOutlet],
   templateUrl: './login-register.component.html',
   styleUrl: './login-register.component.scss',
 })
