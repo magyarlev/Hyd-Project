@@ -19,4 +19,13 @@ export class AuthService {
   loginUser(user: User) {
     return this.http.post<any>(this.#loginUrl, user);
   }
+
+  isLoggedIn() {
+    return !!localStorage.getItem('token');
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    this.router.navigate(['/auth/login']);
+  }
 }
