@@ -1,0 +1,8 @@
+
+@for (story of stories; track story.id) {
+<div class="story-item">{{ story.content }}</div>
+<a mat-fab extended routerLink=".">
+  <mat-icon>delete</mat-icon>
+  <mat-icon>edit</mat-icon>
+</a>
+}

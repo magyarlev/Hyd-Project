@@ -4,8 +4,13 @@ import { ViewAStoryComponent } from './view-a-story/view-a-story.component';
 import { WriteAStoryComponent } from './write-a-story/write-a-story.component';
 import { LoginComponent } from './login-register/login/login.component';
 import { RegisterComponent } from './login-register/register/register.component';
+import { AdminComponent } from './admin/admin.component';
 
 export const routes: Routes = [
+  {
+    path: 'admin',
+    component: AdminComponent,
+  },
   {
     path: 'write-a-story',
     component: WriteAStoryComponent,
