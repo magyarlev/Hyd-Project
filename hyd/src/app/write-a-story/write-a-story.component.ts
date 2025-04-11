@@ -1,6 +1,12 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, Inject, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,7 +21,7 @@ import { StoryPOST } from '../types';
     MatButtonModule,
     MatButtonToggleModule,
     MatInputModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
   ],
   templateUrl: './write-a-story.component.html',
@@ -23,29 +29,35 @@ import { StoryPOST } from '../types';
 })
 export class WriteAStoryComponent {
   #snackBar = inject(MatSnackBar);
+  storyForm!: FormGroup;
+  storyService = inject(StoryService);
+  destroyRef = inject(DestroyRef);
+  fb = inject(FormBuilder);
+  typeSelectionErrorMessage: boolean = false;
+
+  ngOnInit() {
+    this.storyForm = this.fb.group({
+      content: ['', Validators.required],
+      type: ['', Validators.required],
+    });
+  }
 
   #openSnackBar(message: string, action: string) {
     this.#snackBar.open(message, action, { duration: 5000 });
   }
 
-  story: StoryPOST = {
-    type: '',
-    content: '',
-  };
-
-  storyService = inject(StoryService);
-  destroyRef = inject(DestroyRef);
-
   onSubmit() {
-    if (this.story) {
+    if (this.storyForm.valid) {
       this.storyService
-        .addStory(this.story)
+        .addStory(this.storyForm.value)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.#openSnackBar('Story added', 'OK!');
           },
         });
+    } else {
+      this.typeSelectionErrorMessage = true;
     }
   }
 }
