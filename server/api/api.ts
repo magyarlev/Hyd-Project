@@ -121,10 +121,12 @@ router.get("/story", async (req: Request, res: Response) => {
 });
 
 router.get("/story/random", async (req: Request, res: Response) => {
-  try {
-    let story = await Story.find({});
+  const { type } = req.query;
 
-    res.status(200).json(story[Math.floor(Math.random() * story.length - 1)]);
+  try {
+    let stories = await Story.find({ type });
+    const result = stories[Math.floor(Math.random() * stories.length)];
+    res.status(200).json(result);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error.");
