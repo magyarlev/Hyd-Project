@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Story, StoryADMIN, StoryDELETE, StoryPOST, StoryPUT } from './types';
 
@@ -13,8 +13,9 @@ export class StoryService {
     return this.#httpClient.get<StoryADMIN[]>(this.#storyUrl);
   }
 
-  getRandomStory() {
-    return this.#httpClient.get<Story>(`${this.#storyUrl}/random`);
+  getRandomStory(dayType: Story['type']) {
+    const params = new HttpParams().set('type', dayType);
+    return this.#httpClient.get<Story>(`${this.#storyUrl}/random`, { params });
   }
 
   addStory(story: StoryPOST) {
