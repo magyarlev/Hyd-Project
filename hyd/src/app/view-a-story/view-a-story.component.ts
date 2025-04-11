@@ -14,12 +14,12 @@ export class ViewAStoryComponent {
   storyService = inject(StoryService);
   getBadDayStory() {
     this.storyService
-      .getRandomStory()
+      .getRandomStory('bad')
       .subscribe((story) => (this.story = story));
   }
   getGoodDayStory() {
     this.storyService
-      .getRandomStory()
+      .getRandomStory('good')
       .subscribe((story) => (this.story = story));
   }
 }
