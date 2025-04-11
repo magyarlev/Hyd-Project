@@ -2,26 +2,32 @@
   <h1>Tell me about your day</h1>
 
   <div class="form-wrapper">
-    <form (ngSubmit)="onSubmit()">
+    <form (ngSubmit)="onSubmit()" [formGroup]="storyForm">
       <mat-button-toggle-group
         name="story-type"
-        aria-label="story-type"
-        [(ngModel)]="story.type"
+        aria-label="Select an option"
+        formControlName="type"
         required
       >
         <mat-button-toggle value="good">Good day</mat-button-toggle>
         <mat-button-toggle value="bad">Bad day</mat-button-toggle>
       </mat-button-toggle-group>
+      @if(typeSelectionErrorMessage) {
+      <mat-error>Please select an option.</mat-error>
+      }
 
       <mat-form-field>
         <mat-label>Write your story</mat-label>
         <textarea
           matInput
-          [(ngModel)]="story.content"
+          formControlName="content"
           name="story"
           required
         ></textarea>
       </mat-form-field>
+      @if(!storyForm.value.content.valid && storyForm.touched) {
+      <mat-error>Please write your story.</mat-error>
+      }
       <button class="submit-btn" mat-raised-button type="submit">Send</button>
     </form>
   </div>
