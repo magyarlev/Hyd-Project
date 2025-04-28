@@ -16,4 +16,7 @@ export type StoryDELETE = Pick<Story, 'id'>;
 export type User = {
   email: string;
   password: string;
+  role: string;
 };
+
+export type UserPOST = Omit<User, 'role'>;

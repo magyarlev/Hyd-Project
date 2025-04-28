@@ -62,10 +62,11 @@ router.post("/register", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    let user = new User({ email, password: hashedPassword });
+    let user = new User({ email, password: hashedPassword, role: "user" });
     let savedUser = await user.save();
     let payload = {
       subject: savedUser._id,
+      role: savedUser.role,
     };
     const secretKey = process.env.JWT_SECRET;
     if (secretKey) {
@@ -93,6 +94,7 @@ router.post("/login", async (req: Request, res: Response) => {
       }
       let payload = {
         subject: foundUser._id,
+        role: foundUser.role,
       };
       const secretKey = process.env.JWT_SECRET;
       if (secretKey) {
