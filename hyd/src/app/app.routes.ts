@@ -6,6 +6,8 @@ import { LoginComponent } from './login-register/login/login.component';
 import { RegisterComponent } from './login-register/register/register.component';
 import { AdminComponent } from './admin/admin.component';
 import { authGuard } from './auth.guard';
+import { DonateComponent } from './donate/donate.component';
+import { AboutComponent } from './about/about.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +25,14 @@ export const routes: Routes = [
     path: 'view-a-story',
     component: ViewAStoryComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'donate',
+    component: DonateComponent,
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
   },
   {
     path: 'auth',
