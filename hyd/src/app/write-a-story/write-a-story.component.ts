@@ -55,6 +55,10 @@ export class WriteAStoryComponent {
           next: () => {
             this.#openSnackBar('Story added', 'OK!');
           },
+          error: (err) => {
+            console.error(err);
+            this.#openSnackBar('Error adding story', 'OK!');
+          },
         });
     } else {
       this.typeSelectionErrorMessage = true;
