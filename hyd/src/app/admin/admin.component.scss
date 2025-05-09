@@ -1,5 +1,18 @@
 .story-wrapper {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 7fr 1fr;
   height: 100%;
+  margin: 20px auto;
+  justify-items: start;
+  align-items: center;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 1px 1px 3px #22a3dd;
+  width: 50%;
+}
+
+.action-btn-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-self: end;
 }

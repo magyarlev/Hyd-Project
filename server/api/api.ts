@@ -214,9 +214,9 @@ router.put(
   async (req: Request, res: Response) => {
     try {
       const story = req.body;
-      const updatedStory = await Story.findByIdAndUpdate(story.id, story);
+      const updatedStory = await Story.findByIdAndUpdate(story._id, story);
       if (updatedStory) {
-        res.status(200).send("Story updated successfully");
+        res.status(200).json("Story updated successfully");
       } else {
         res.status(500).send("Story not found");
       }
@@ -227,7 +227,7 @@ router.put(
 );
 
 router.delete(
-  "/story",
+  "/story/:id",
   extractToken,
   verifyToken,
   async (req: Request, res: Response) => {
@@ -235,7 +235,7 @@ router.delete(
     try {
       const deletedStory = await Story.findByIdAndDelete(storyId);
       if (deletedStory) {
-        res.status(200).send("Story deleted successfully");
+        res.status(200).json("Story deleted successfully");
       } else {
         res.status(404).send("Story not found");
       }

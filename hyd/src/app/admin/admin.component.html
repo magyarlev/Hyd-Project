@@ -1,9 +1,16 @@
-@for (story of stories; track story.id) {
+@for (story of stories; track story._id) {
 <div class="story-wrapper">
+  <button mat-fab>
+    <mat-icon>info</mat-icon>
+  </button>
   <div class="story-item">{{ story.content }}</div>
-  <a mat-fab extended routerLink=".">
-    <mat-icon>delete</mat-icon>
-    <mat-icon>edit</mat-icon>
-  </a>
+  <div class="action-btn-wrapper">
+    <button mat-fab (click)="openDialog(story)">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-fab (click)="deleteStory(story._id)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
 </div>
 }

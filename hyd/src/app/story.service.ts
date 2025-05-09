@@ -13,6 +13,8 @@ export class StoryService {
     return this.#httpClient.get<StoryADMIN[]>(this.#storyUrl);
   }
 
+  getUserStories(userId: string) {}
+
   getRandomStory(dayType: Story['type']) {
     const params = new HttpParams().set('type', dayType);
     return this.#httpClient.get<Story>(`${this.#storyUrl}/random`, { params });
@@ -26,7 +28,7 @@ export class StoryService {
     return this.#httpClient.put<Story>(this.#storyUrl, story);
   }
 
-  deleteStory(storyId: StoryDELETE) {
+  deleteStory(storyId: StoryDELETE['_id']) {
     return this.#httpClient.delete<void>(`${this.#storyUrl}/${storyId}`);
   }
 }

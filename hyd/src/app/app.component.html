@@ -5,8 +5,11 @@
     <li><a routerLink="/view-a-story">Tell me a story</a></li>
     <li><a routerLink="/donate">Donate</a></li>
     <li><a routerLink="/about">About us</a></li>
-
     <li><a routerLink="/admin">Admin</a></li>
+    @if (this.authService.isLoggedIn()) {
+    <li><a href="#" (click)="logout()">Logout</a></li>
+
+    }
   </ul>
   }
 </nav>
