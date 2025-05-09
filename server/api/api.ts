@@ -11,7 +11,8 @@ dotenv.config();
 const router = express.Router();
 const db = "mongodb://localhost:27017/how-is-your-day";
 export interface CustomRequest extends Request {
-  userId: string | JwtPayload;
+  token?: string;
+  userId?: string;
 }
 
 mongoose
@@ -23,32 +24,56 @@ mongoose
     console.error(error);
   });
 
-export const verifyToken = async (
-  req: Request,
+export const extractToken = (
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.headers.authorization) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).send("Unauthorized request");
     throw new Error();
   }
-  let token = req.headers.authorization.split(" ")[1];
+  let token = authHeader.split(" ")[1];
   if (token === "null") {
     res.status(401).send("Unauthorized request");
     throw new Error();
   }
+  req.token = token;
+  next();
+};
 
+export const verifyToken = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const secretKey = process.env.JWT_SECRET;
+  const token = (req as any).token;
   if (secretKey) {
     let payload = jwt.verify(token, secretKey);
     if (!payload) {
       res.status(401).send("Unauthorized request");
       throw new Error();
     }
-    (req as CustomRequest).userId = payload as string;
     next();
   } else {
-    throw new Error("JWT key error.");
+    throw new Error("Invalid token.");
+  }
+};
+
+export const attachUserId = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const decoded = jwt.decode((req as any).token) as JwtPayload;
+    (req as any).userId = decoded.subject;
+    next();
+  } catch (error) {
+    res.status(401).send("Invalid or malformed token");
+    throw new Error();
   }
 };
 
@@ -112,70 +137,112 @@ router.post("/login", async (req: Request, res: Response) => {
 
 // STORY API
 
-router.get("/story", async (req: Request, res: Response) => {
-  try {
-    let stories = await Story.find({});
-    res.status(200).json(stories);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal server error.");
-  }
-});
-
-router.get("/story/random", async (req: Request, res: Response) => {
-  const { type } = req.query;
-
-  try {
-    let stories = await Story.find({ type });
-    const result = stories[Math.floor(Math.random() * stories.length)];
-    res.status(200).json(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal server error.");
-  }
-});
-
-router.post("/story", async (req: Request, res: Response) => {
-  try {
-    const newStory = new Story({
-      email: req.body.email,
-      type: req.body.type,
-      content: req.body.content,
-    });
-    const registeredStory = await newStory.save();
-    res.status(200).json(registeredStory);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal server error.");
-  }
-});
-
-router.put("/story", async (req: Request, res: Response) => {
-  try {
-    const story = req.body;
-    const updatedStory = await Story.findByIdAndUpdate(story.id, story);
-    if (updatedStory) {
-      res.status(200).send("Story updated successfully");
-    } else {
-      res.status(500).send("Story not found");
+router.get(
+  "/story",
+  extractToken,
+  verifyToken,
+  attachUserId,
+  async (req: CustomRequest, res: Response) => {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      res.status(401).send("Unauthorized request");
+      throw new Error();
+    } else if (user.role !== "admin") {
+      try {
+        const stories = await Story.find({ author: user });
+        res.status(200).json(stories);
+      } catch (error) {
+        res.status(500).send("Internal server error.");
+        throw new Error("Story not found.");
+      }
+    } else if (user.role === "admin") {
+      try {
+        let stories = await Story.find({});
+        res.status(200).json(stories);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal server error.");
+      }
     }
-  } catch (error) {
-    res.status(500).send("Internal server error");
   }
-});
+);
 
-router.delete("/story", async (req: Request, res: Response) => {
-  const storyId = req.params.id;
-  try {
-    const deletedStory = await Story.findByIdAndDelete(storyId);
-    if (deletedStory) {
-      res.status(200).send("Story deleted successfully");
-    } else {
-      res.status(404).send("Story not found");
+router.get(
+  "/story/random",
+  extractToken,
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const type = req.query.type;
+
+    try {
+      let stories = await Story.find({ type });
+      const result = stories[Math.floor(Math.random() * stories.length)];
+      res.status(200).json(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal server error.");
     }
-  } catch (error) {
-    res.status(500).send("Internal server error");
   }
-});
+);
+
+router.post(
+  "/story",
+  extractToken,
+  verifyToken,
+  attachUserId,
+  async (req: CustomRequest, res: Response) => {
+    try {
+      const user = await User.findById(req.userId);
+      const newStory = new Story({
+        author: user,
+        type: req.body.type,
+        content: req.body.content,
+      });
+      const registeredStory = await newStory.save();
+      res.status(200).json(registeredStory);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal server error.");
+    }
+  }
+);
+
+router.put(
+  "/story",
+  extractToken,
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const story = req.body;
+      const updatedStory = await Story.findByIdAndUpdate(story.id, story);
+      if (updatedStory) {
+        res.status(200).send("Story updated successfully");
+      } else {
+        res.status(500).send("Story not found");
+      }
+    } catch (error) {
+      res.status(500).send("Internal server error");
+    }
+  }
+);
+
+router.delete(
+  "/story",
+  extractToken,
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const storyId = req.params.id;
+    try {
+      const deletedStory = await Story.findByIdAndDelete(storyId);
+      if (deletedStory) {
+        res.status(200).send("Story deleted successfully");
+      } else {
+        res.status(404).send("Story not found");
+      }
+    } catch (error) {
+      res.status(500).send("Internal server error");
+    }
+  }
+);
 
 export default router;
