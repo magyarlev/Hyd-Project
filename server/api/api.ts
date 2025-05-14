@@ -86,12 +86,18 @@ router.get("/", (req: Request, res: Response) => {
 router.post("/register", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    const existingUser = await User.find({ email });
+    if (existingUser.length > 0) {
+      res.status(401).send("User already exists");
+      return;
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     let user = new User({ email, password: hashedPassword, role: "user" });
     let savedUser = await user.save();
     let payload = {
       subject: savedUser._id,
       role: savedUser.role,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
     };
     const secretKey = process.env.JWT_SECRET;
     if (secretKey) {
@@ -120,6 +126,7 @@ router.post("/login", async (req: Request, res: Response) => {
       let payload = {
         subject: foundUser._id,
         role: foundUser.role,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
       };
       const secretKey = process.env.JWT_SECRET;
       if (secretKey) {
@@ -216,7 +223,7 @@ router.put(
       const story = req.body;
       const updatedStory = await Story.findByIdAndUpdate(story._id, story);
       if (updatedStory) {
-        res.status(200).json("Story updated successfully");
+        res.status(200).json(updatedStory);
       } else {
         res.status(500).send("Story not found");
       }
