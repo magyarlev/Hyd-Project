@@ -25,7 +25,7 @@
           required
         ></textarea>
       </mat-form-field>
-      @if(!storyForm.value.content.valid && storyForm.touched) {
+      @if(!storyForm.get('content')?.valid && storyForm.touched) {
       <mat-error>Please write your story.</mat-error>
       }
       <button class="submit-btn" mat-raised-button type="submit">Send</button>

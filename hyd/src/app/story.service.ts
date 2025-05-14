@@ -1,5 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import {
+  inject,
+  Injectable,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { Story, StoryADMIN, StoryDELETE, StoryPOST, StoryPUT } from './types';
 
 @Injectable({
@@ -8,6 +14,9 @@ import { Story, StoryADMIN, StoryDELETE, StoryPOST, StoryPUT } from './types';
 export class StoryService {
   #httpClient = inject(HttpClient);
   #storyUrl = `http://localhost:3000/api/story`;
+  currentStory: WritableSignal<Story | undefined> = signal<Story | undefined>(
+    undefined
+  );
 
   getAllStories() {
     return this.#httpClient.get<StoryADMIN[]>(this.#storyUrl);
@@ -15,13 +24,21 @@ export class StoryService {
 
   getUserStories(userId: string) {}
 
-  getRandomStory(dayType: Story['type']) {
+  loadRandomStory(dayType: Story['type']) {
     const params = new HttpParams().set('type', dayType);
-    return this.#httpClient.get<Story>(`${this.#storyUrl}/random`, { params });
+    this.#httpClient
+      .get<Story>(`${this.#storyUrl}/random`, { params })
+      .subscribe((story) => {
+        this.currentStory.set(story);
+      });
+  }
+
+  setStory(story: Story) {
+    this.currentStory.set(story);
   }
 
   addStory(story: StoryPOST) {
-    return this.#httpClient.post<void>(this.#storyUrl, story);
+    return this.#httpClient.post<Story>(this.#storyUrl, story);
   }
 
   updateStory(story: StoryPUT) {

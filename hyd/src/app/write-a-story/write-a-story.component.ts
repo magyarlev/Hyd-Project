@@ -1,9 +1,8 @@
-import { Component, DestroyRef, Inject, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -13,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StoryService } from '../story.service';
-import { StoryPOST } from '../types';
+import { StoryForm, StoryPOST } from '../types';
 
 @Component({
   selector: 'app-write-a-story',
@@ -29,14 +28,15 @@ import { StoryPOST } from '../types';
 })
 export class WriteAStoryComponent {
   #snackBar = inject(MatSnackBar);
-  storyForm!: FormGroup;
+  storyForm!: FormGroup<StoryForm>;
   storyService = inject(StoryService);
   destroyRef = inject(DestroyRef);
   fb = inject(FormBuilder);
+
   typeSelectionErrorMessage: boolean = false;
 
   ngOnInit() {
-    this.storyForm = this.fb.group({
+    this.storyForm = this.fb.nonNullable.group({
       content: ['', Validators.required],
       type: ['', Validators.required],
     });
@@ -48,12 +48,17 @@ export class WriteAStoryComponent {
 
   onSubmit() {
     if (this.storyForm.valid) {
+      const story: StoryPOST = {
+        content: this.storyForm.getRawValue().content,
+        type: this.storyForm.getRawValue().type,
+      };
       this.storyService
-        .addStory(this.storyForm.value)
+        .addStory(story)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: () => {
+          next: (result) => {
             this.#openSnackBar('Story added', 'OK!');
+            this.storyService.setStory(result);
           },
           error: (err) => {
             console.error(err);
