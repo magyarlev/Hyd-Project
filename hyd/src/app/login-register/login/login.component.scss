@@ -8,10 +8,14 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    button {
+    #login-btn {
       background-color: #22a3dd;
       color: white;
       letter-spacing: 0.2em;
+      &:disabled {
+        background-color: #ccc;
+        color: #666;
+      }
     }
   }
   span {

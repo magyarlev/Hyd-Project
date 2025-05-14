@@ -1,0 +1,47 @@
+<h2>Edit story</h2>
+
+<form #storyForm="ngForm" (ngSubmit)="onSubmit()" class="story-form">
+  <mat-dialog-content>
+    <div class="story-input">
+      <h3>Edit content</h3>
+      <textarea [(ngModel)]="storyContent" name="content">{{
+        storyContent
+      }}</textarea>
+    </div>
+    <div class="story-input">
+      <h3>Edit type</h3>
+      <div class="input-wrapper">
+        <div class="input-group">
+          <input
+            type="radio"
+            id="goodDay"
+            name="storyType"
+            value="good"
+            [(ngModel)]="storyType"
+            ngClass
+            required
+          />
+          <label for="goodDay">Good Day</label>
+        </div>
+        <div class="input-group">
+          <input
+            type="radio"
+            id="badDay"
+            name="storyType"
+            value="bad"
+            [(ngModel)]="storyType"
+            required
+          />
+          <label for="badDay">Bad Day</label>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial type="submit">
+      Confirm
+    </button>
+  </mat-dialog-actions>
+</form>

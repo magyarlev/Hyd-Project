@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',
@@ -30,6 +31,13 @@ export class RegisterComponent {
   #destroyRef = inject(DestroyRef);
   #router = inject(Router);
   registerForm: FormGroup;
+  #snackBar = inject(MatSnackBar);
+
+  openSnackBar(message: string) {
+    this.#snackBar.open(message, 'Close', {
+      duration: 2000,
+    });
+  }
 
   onSubmit() {
     if (this.registerForm.valid) {
@@ -46,6 +54,7 @@ export class RegisterComponent {
           },
           error: (err) => {
             console.error(err);
+            this.openSnackBar(`Error: ${err.error}`);
           },
         });
     }
