@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { StoryService } from '../story.service';
 import { Story } from '../types';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-view-a-story',
@@ -10,16 +11,9 @@ import { Story } from '../types';
   styleUrl: './view-a-story.component.scss',
 })
 export class ViewAStoryComponent {
-  story?: Story;
   storyService = inject(StoryService);
-  getBadDayStory() {
-    this.storyService
-      .getRandomStory('bad')
-      .subscribe((story) => (this.story = story));
-  }
-  getGoodDayStory() {
-    this.storyService
-      .getRandomStory('good')
-      .subscribe((story) => (this.story = story));
+  story: Signal<Story | undefined> = this.storyService.currentStory;
+  getRandomStory(type: 'good' | 'bad') {
+    this.storyService.loadRandomStory(type);
   }
 }

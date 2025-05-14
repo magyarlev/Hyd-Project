@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, UserPOST } from './types';
 import { jwtDecode } from 'jwt-decode';
+import { catchError, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,11 +23,20 @@ export class AuthService {
   }
 
   loginUser(user: UserPOST) {
-    return this.http.post<any>(this.#loginUrl, user);
+    return this.http.post<any>(this.#loginUrl, user).pipe(
+      tap(() => {
+        this.isLoggedIn.set(true);
+      }),
+      catchError((error) => {
+        this.isLoggedIn.set(false);
+        throw new Error(error);
+      })
+    );
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    this.isLoggedIn.set(false);
     this.router.navigate(['/auth/login']);
   }
 

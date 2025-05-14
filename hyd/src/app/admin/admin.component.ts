@@ -4,9 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService } from '../auth.service';
 import { StoryService } from '../story.service';
-import { Story, StoryADMIN, StoryDELETE, StoryPUT } from '../types';
+import { Story, StoryADMIN } from '../types';
 import { PopupComponent } from './popup/popup.component';
 
 @Component({
@@ -18,7 +17,6 @@ import { PopupComponent } from './popup/popup.component';
 export class AdminComponent {
   stories: StoryADMIN[] = [];
   #storyService = inject(StoryService);
-  #authService = inject(AuthService);
   #destroyRef = inject(DestroyRef);
   #snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
@@ -43,7 +41,7 @@ export class AdminComponent {
     });
   }
 
-  deleteStory(storyId: StoryDELETE['_id']) {
+  deleteStory(storyId: Story['_id']) {
     this.#storyService
       .deleteStory(storyId)
       .pipe(takeUntilDestroyed(this.#destroyRef))
@@ -58,20 +56,22 @@ export class AdminComponent {
         },
       });
   }
-  editStory(story: StoryPUT) {
+
+  editStory(story: Story) {
     this.#storyService
       .updateStory(story)
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
-        next: () => {
-          const index = this.stories.findIndex((s) => s._id === story._id);
+        next: (result) => {
+          const index = this.stories.findIndex((s) => s._id === result._id);
           if (index !== -1) {
             this.stories[index] = { ...this.stories[index], ...story };
           }
+          this.openSnackBar(`Story updated: ${story._id}`);
         },
         error: (err) => {
           console.error(err);
-          this.openSnackBar(`Error updating story: ${story._id}`);
+          this.openSnackBar(`Error updating story ${story._id}`);
         },
       });
   }
