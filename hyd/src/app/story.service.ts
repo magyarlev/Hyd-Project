@@ -22,8 +22,6 @@ export class StoryService {
     return this.#httpClient.get<StoryADMIN[]>(this.#storyUrl);
   }
 
-  getUserStories(userId: string) {}
-
   loadRandomStory(dayType: Story['type']) {
     const params = new HttpParams().set('type', dayType);
     this.#httpClient

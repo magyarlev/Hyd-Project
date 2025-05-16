@@ -47,7 +47,10 @@ export class AdminComponent {
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
         next: () => {
-          this.stories = this.stories.filter((story) => story._id !== storyId);
+          const storyIndexToRemove = this.stories.findIndex(
+            (story) => story._id === storyId
+          );
+          this.stories.splice(storyIndexToRemove, 1);
           this.openSnackBar(`${storyId} Story deleted successfully!`);
         },
         error: (err) => {
