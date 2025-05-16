@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewAStoryComponent } from './view-a-story.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('ViewAStoryComponent', () => {
   let component: ViewAStoryComponent;
@@ -8,9 +10,9 @@ describe('ViewAStoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ViewAStoryComponent]
-    })
-    .compileComponents();
+      imports: [ViewAStoryComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ViewAStoryComponent);
     component = fixture.componentInstance;
