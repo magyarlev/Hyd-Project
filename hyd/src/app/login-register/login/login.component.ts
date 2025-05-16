@@ -12,6 +12,7 @@ import { AuthService } from '../../auth.service';
 import { User } from '../../types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +33,13 @@ export class LoginComponent {
   passwordError?: string;
   #destroyRef = inject(DestroyRef);
   #router = inject(Router);
+  #snackBar = inject(MatSnackBar);
+
+  openSnackBar(message: string) {
+    this.#snackBar.open(message, 'Close', {
+      duration: 2000,
+    });
+  }
 
   constructor() {
     this.loginForm = this.#fb.group({
@@ -52,6 +60,7 @@ export class LoginComponent {
           },
           error: (err) => {
             this.passwordError = err;
+            this.openSnackBar(err);
           },
         });
     }

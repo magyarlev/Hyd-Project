@@ -51,6 +51,7 @@ export class RegisterComponent {
           next: (res) => {
             localStorage.setItem('token', res.token);
             this.#router.navigate(['/login']);
+            this.openSnackBar('Registration successful! Please log in.');
           },
           error: (err) => {
             console.error(err);
