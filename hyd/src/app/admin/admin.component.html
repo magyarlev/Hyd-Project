@@ -5,10 +5,10 @@
   </button>
   <div class="story-item">{{ story.content }}</div>
   <div class="action-btn-wrapper">
-    <button mat-fab (click)="openDialog(story)">
+    <button class="edit-btn" mat-fab (click)="openDialog(story)">
       <mat-icon>edit</mat-icon>
     </button>
-    <button mat-fab (click)="deleteStory(story._id)">
+    <button class="delete-btn" mat-fab (click)="deleteStory(story._id)">
       <mat-icon>delete</mat-icon>
     </button>
   </div>
