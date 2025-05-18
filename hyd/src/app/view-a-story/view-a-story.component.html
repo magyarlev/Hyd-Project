@@ -10,7 +10,19 @@
   </article>
 
   <div class="btn-wrapper">
-    <button mat-raised-button (click)="getRandomStory('good')">Good day</button>
-    <button mat-raised-button (click)="getRandomStory('bad')">Bad Day</button>
+    <button
+      id="get-good-story-btn"
+      mat-raised-button
+      (click)="getRandomStory('good')"
+    >
+      Good day
+    </button>
+    <button
+      id="get-bad-story-btn"
+      mat-raised-button
+      (click)="getRandomStory('bad')"
+    >
+      Bad Day
+    </button>
   </div>
 </section>

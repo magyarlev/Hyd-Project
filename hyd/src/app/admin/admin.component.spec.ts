@@ -92,7 +92,7 @@ describe('AdminComponent', () => {
     expect(storyConetentDiv.nativeElement.textContent).toContain('Content 1');
   });
 
-  it(`should edit the first story's content and type after dialog has closed`, () => {
+  it(`should open the edit dialog with the selected story and call editStory with the result`, () => {
     spyOn(component, 'editStory');
     fixture.detectChanges();
     mockDialog.open.and.returnValue({
@@ -106,7 +106,7 @@ describe('AdminComponent', () => {
     expect(component.editStory).toHaveBeenCalledOnceWith(mockStories[0]);
   });
 
-  it(`should edit the first story's content and type after dialog has closed`, () => {
+  it(`should open the edit dialog with the selected story and NOT call editStory`, () => {
     spyOn(component, 'editStory');
     fixture.detectChanges();
     mockDialog.open.and.returnValue({
