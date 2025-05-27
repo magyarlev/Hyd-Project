@@ -97,11 +97,10 @@ router.post("/register", async (req: Request, res: Response) => {
     let payload = {
       subject: savedUser._id,
       role: savedUser.role,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
     };
     const secretKey = process.env.JWT_SECRET;
     if (secretKey) {
-      let token = jwt.sign(payload, secretKey);
+      let token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
       res.status(200).send({ token });
     } else {
       throw new Error("JWT key error.");
