@@ -1,16 +1,6 @@
-@for (story of stories; track story._id) {
-<div class="story-wrapper">
-  <button mat-fab>
-    <mat-icon>info</mat-icon>
-  </button>
-  <div class="story-item">{{ story.content }}</div>
-  <div class="action-btn-wrapper">
-    <button class="edit-btn" mat-fab (click)="openDialog(story)">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button class="delete-btn" mat-fab (click)="deleteStory(story._id)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </div>
-</div>
-}
+<section class="story-list">
+  <app-story-list
+    (statusChange)="editStory($event)"
+    [storiesInput]="stories"
+  ></app-story-list>
+</section>

@@ -26,8 +26,13 @@ export class StoryService {
     const params = new HttpParams().set('type', dayType);
     this.#httpClient
       .get<Story>(`${this.#storyUrl}/random`, { params })
-      .subscribe((story) => {
-        this.currentStory.set(story);
+      .subscribe({
+        next: (story) => {
+          this.currentStory.set(story);
+        },
+        error: (err) => {
+          this.currentStory.set(undefined);
+        },
       });
   }
 

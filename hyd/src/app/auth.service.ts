@@ -19,7 +19,11 @@ export class AuthService {
     return localStorage.getItem('token');
   }
   registerUser(user: UserPOST) {
-    return this.http.post<any>(this.#registerUrl, user);
+    return this.http.post<any>(this.#registerUrl, user).pipe(
+      catchError((error) => {
+        throw new Error('Registration failed');
+      })
+    );
   }
 
   loginUser(user: UserPOST) {
@@ -29,7 +33,7 @@ export class AuthService {
       }),
       catchError((error) => {
         this.isLoggedIn.set(false);
-        throw new Error(error);
+        throw new Error('Login failed');
       })
     );
   }

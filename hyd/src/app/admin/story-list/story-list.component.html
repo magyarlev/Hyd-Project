@@ -1,0 +1,112 @@
+<mat-button-toggle-group
+  name="fontStyle"
+  aria-label="Font Style"
+  class="btn-toggle-group"
+>
+  <mat-button-toggle value="italic" (click)="filterByStatus('pending')"
+    >Pending</mat-button-toggle
+  >
+  <mat-button-toggle value="bold" (click)="filterByStatus('approved')"
+    >Approved</mat-button-toggle
+  >
+  <mat-button-toggle value="italic" (click)="filterByStatus('rejected')"
+    >Rejected</mat-button-toggle
+  >
+  <mat-button-toggle value="underline" (click)="filterByStatus(null)"
+    >All</mat-button-toggle
+  >
+</mat-button-toggle-group>
+
+<table
+  [dataSource]="stories"
+  mat-table
+  mat-sort
+  multiTemplateDataRows
+  class="mat-elevation-z8"
+>
+  @for (column of columnsToDisplay; track column) { @if(column !== 'approve' &&
+  column !== 'reject') {
+
+  <ng-container matColumnDef="{{ column }}">
+    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+    <td mat-cell *matCellDef="let story">{{ story[column] }}</td>
+  </ng-container>
+  } }
+  <ng-container matColumnDef="approve">
+    <th mat-header-cell *matHeaderCellDef>approve</th>
+    <td mat-cell *matCellDef="let element">
+      <div class="action-btn-wrapper">
+        <button
+          mat-button
+          color="primary"
+          (click)="changeStatus(element, 'approved')"
+        >
+          <mat-icon>check</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="reject">
+    <th mat-header-cell *matHeaderCellDef>reject</th>
+    <td mat-cell *matCellDef="let element">
+      <div class="action-btn-wrapper">
+        <button
+          mat-button
+          color="accent"
+          (click)="changeStatus(element, 'rejected')"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+    <td mat-cell *matCellDef="let story">
+      <button
+        matIconButton
+        aria-label="expand row"
+        (click)="toggle(story); $event.stopPropagation()"
+        class="example-toggle-button"
+        [class.example-toggle-button-expanded]="isExpanded(story)"
+      >
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td
+      mat-cell
+      *matCellDef="let story"
+      [attr.colspan]="columnsToDisplayWithExpand.length"
+    >
+      <div
+        class="example-story-detail-wrapper"
+        [class.example-story-detail-wrapper-expanded]="isExpanded(story)"
+      >
+        <div class="example-story-detail">
+          <div class="example-story-description">
+            {{ story.content }}
+          </div>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+  <tr
+    mat-row
+    *matRowDef="let story; columns: columnsToDisplayWithExpand"
+    class="example-story-row"
+    [class.example-expanded-row]="isExpanded(story)"
+    (click)="toggle(story)"
+  ></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: ['expandedDetail']"
+    class="example-detail-row"
+  ></tr>
+</table>

@@ -55,7 +55,7 @@ export class RegisterComponent {
           },
           error: (err) => {
             console.error(err);
-            this.openSnackBar(`Error: ${err.error}`);
+            this.openSnackBar(err);
           },
         });
     }

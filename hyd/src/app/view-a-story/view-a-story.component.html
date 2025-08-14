@@ -2,11 +2,13 @@
   <h1>Tell me a story!</h1>
 
   <article class="story-wrapper">
-    @if(story()) {
     <p>
+      @if(story()) {
       {{ story()?.content }}
+      } @else {
+      {{ "No story available." }}
+      }
     </p>
-    }
   </article>
 
   <div class="btn-wrapper">
