@@ -1,14 +1,6 @@
-.story-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 7fr 1fr;
-  height: 100%;
-  margin: 20px auto;
-  justify-items: start;
-  align-items: center;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 1px 1px 3px #22a3dd;
+.story-list {
   width: 50%;
+  margin: 100px auto;
 }
 
 .action-btn-wrapper {

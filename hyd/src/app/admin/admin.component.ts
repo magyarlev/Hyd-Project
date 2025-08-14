@@ -1,16 +1,22 @@
-import { Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, signal, Signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StoryService } from '../story.service';
 import { Story, StoryADMIN } from '../types';
 import { PopupComponent } from './popup/popup.component';
-
+import { StoryListComponent } from './story-list/story-list.component';
 @Component({
   selector: 'app-admin',
-  imports: [MatIcon, MatButtonModule],
+  imports: [
+    MatButtonModule,
+    MatExpansionModule,
+    MatIconModule,
+    StoryListComponent,
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
 })
@@ -22,6 +28,10 @@ export class AdminComponent {
   readonly dialog = inject(MatDialog);
 
   ngOnInit() {
+    this.getAllStories();
+  }
+
+  getAllStories() {
     this.#storyService
       .getAllStories()
       .pipe(takeUntilDestroyed(this.#destroyRef))
@@ -66,10 +76,7 @@ export class AdminComponent {
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
         next: (result) => {
-          const index = this.stories.findIndex((s) => s._id === result._id);
-          if (index !== -1) {
-            this.stories[index] = { ...this.stories[index], ...story };
-          }
+          this.getAllStories();
           this.openSnackBar(`Story updated: ${story._id}`);
         },
         error: (err) => {

@@ -8,6 +8,7 @@ export interface Story {
 
 export interface StoryADMIN extends Story {
   email: string;
+  status: 'approved' | 'pending' | 'rejected';
 }
 
 export type StoryPOST = Omit<Story, '_id'>;

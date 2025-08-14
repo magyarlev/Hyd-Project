@@ -125,11 +125,10 @@ router.post("/login", async (req: Request, res: Response) => {
       let payload = {
         subject: foundUser._id,
         role: foundUser.role,
-        exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
       };
       const secretKey = process.env.JWT_SECRET;
       if (secretKey) {
-        let token = jwt.sign(payload, secretKey);
+        let token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
         res.status(200).send({ token });
       } else {
         throw new Error("JWT key error.");
@@ -163,8 +162,20 @@ router.get(
       }
     } else if (user.role === "admin") {
       try {
-        let stories = await Story.find({});
-        res.status(200).json(stories);
+        type User = {
+          email: string;
+        };
+        const stories = await Story.find()
+          .populate<{ author: User }>("author", "email")
+          .exec();
+        const response = stories.map((story) => ({
+          _id: story._id,
+          type: story.type,
+          content: story.content,
+          email: story.author.email,
+          status: story.status,
+        }));
+        res.status(200).json(response);
       } catch (error) {
         console.error(error);
         res.status(500).send("Internal server error.");
@@ -181,7 +192,11 @@ router.get(
     const type = req.query.type;
 
     try {
-      let stories = await Story.find({ type });
+      let stories = await Story.find({ type, status: "approved" });
+
+      if (!stories.length) {
+        res.status(404).send("No approved stories found.");
+      }
       const result = stories[Math.floor(Math.random() * stories.length)];
       res.status(200).json(result);
     } catch (error) {
@@ -203,6 +218,7 @@ router.post(
         author: user,
         type: req.body.type,
         content: req.body.content,
+        status: "pending",
       });
       const registeredStory = await newStory.save();
       res.status(200).json(registeredStory);
