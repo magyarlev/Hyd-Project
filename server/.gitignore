@@ -2,3 +2,5 @@
 .vscode
 .angular
 .env
+.env.local
+dist/
