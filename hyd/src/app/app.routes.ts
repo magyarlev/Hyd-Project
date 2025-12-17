@@ -8,6 +8,7 @@ import { AdminComponent } from './admin/admin.component';
 import { authGuard } from './auth.guard';
 import { DonateComponent } from './donate/donate.component';
 import { AboutComponent } from './about/about.component';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,10 @@ export const routes: Routes = [
   {
     path: 'about',
     component: AboutComponent,
+  },
+  {
+    path: 'verify-email',
+    component: VerifyEmailComponent,
   },
   {
     path: 'auth',

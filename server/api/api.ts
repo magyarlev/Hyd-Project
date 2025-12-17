@@ -5,6 +5,11 @@ import Story from "../modules/story";
 import User from "../modules/users";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import {
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} from "../services/emailService";
 
 dotenv.config();
 
@@ -92,21 +97,46 @@ router.post("/register", async (req: Request, res: Response) => {
       return;
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    let user = new User({ email, password: hashedPassword, role: "user" });
+
+    // Email verifikációs token generálása
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 óra
+
+    let user = new User({
+      email,
+      password: hashedPassword,
+      role: "user",
+      emailVerified: false,
+      emailVerificationToken: verificationToken,
+      emailVerificationTokenExpires: tokenExpires,
+    });
     let savedUser = await user.save();
-    let payload = {
-      subject: savedUser._id,
-      role: savedUser.role,
-    };
-    const secretKey = process.env.JWT_SECRET;
-    if (secretKey) {
-      let token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
-      res.status(200).send({ token });
-    } else {
-      throw new Error("JWT key error.");
+
+    // Verifikációs email küldése
+    const verificationLink = `${
+      process.env.CLIENT_URL || "http://localhost:4200"
+    }/verify-email?token=${verificationToken}&userId=${savedUser._id}`;
+
+    try {
+      await sendVerificationEmail(email, verificationLink);
+    } catch (emailError) {
+      console.error("Email sending failed:", emailError);
+      // Email küldés sikertelen, de a felhasználó regisztrálva van
+      res.status(201).send({
+        message:
+          "User registered, but verification email could not be sent. Please try again later.",
+        userId: savedUser._id,
+      });
+      return;
     }
+
+    res.status(201).send({
+      message:
+        "User registered successfully. Please check your email to verify your account.",
+      userId: savedUser._id,
+    });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Registration error:", error);
     res.status(500).send("Something went wrong, please try again later.");
   }
 });
@@ -117,10 +147,20 @@ router.post("/login", async (req: Request, res: Response) => {
     const foundUser = await User.findOne({ email });
     if (!foundUser) {
       res.status(401).send("Invalid email");
-    } else if (foundUser.password) {
+      return;
+    }
+
+    // Ellenőrizzük, hogy az email hitelesített-e
+    if (!foundUser.emailVerified) {
+      res.status(403).send("Please verify your email before logging in");
+      return;
+    }
+
+    if (foundUser.password) {
       const passwordMatch = await bcrypt.compare(password, foundUser.password);
       if (!passwordMatch) {
         res.status(401).send("Invalid password");
+        return;
       }
       let payload = {
         subject: foundUser._id,
@@ -263,6 +303,120 @@ router.delete(
       }
     } catch (error) {
       res.status(500).send("Internal server error");
+    }
+  }
+);
+
+// EMAIL VERIFICATION API
+
+router.post("/verify-email", async (req: Request, res: Response) => {
+  try {
+    const { token, userId } = req.body;
+
+    if (!token || !userId) {
+      res.status(400).send("Token and userId are required");
+      return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).send("User not found");
+      return;
+    }
+
+    // Ellenőrizzük, hogy a token helyes és nem járt le
+    if (user.emailVerificationToken !== token) {
+      res.status(400).send("Invalid verification token");
+      return;
+    }
+
+    if (
+      user.emailVerificationTokenExpires &&
+      new Date() > user.emailVerificationTokenExpires
+    ) {
+      res.status(400).send("Verification token has expired");
+      return;
+    }
+
+    // Email hitelesítésének megjelölése
+    user.emailVerified = true;
+    user.emailVerificationToken = null;
+    user.emailVerificationTokenExpires = null;
+    await user.save();
+
+    // Üdvözlő email küldése
+    try {
+      if (user.email) {
+        await sendWelcomeEmail(user.email, user.email.split("@")[0]);
+      }
+    } catch (emailError) {
+      console.error("Welcome email sending failed:", emailError);
+      // Az email küldés sikertelen, de a verifikáció sikerült
+    }
+
+    res.status(200).send({
+      message: "Email verified successfully! You can now login.",
+      userId: user._id,
+    });
+  } catch (error) {
+    console.error("Email verification error:", error);
+    res.status(500).send("Something went wrong during verification");
+  }
+});
+
+// Újra elküldeni a verifikációs email-t
+router.post(
+  "/resend-verification-email",
+  async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        res.status(400).send("Email is required");
+        return;
+      }
+
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        res.status(404).send("User not found");
+        return;
+      }
+
+      if (user.emailVerified) {
+        res.status(400).send("Email is already verified");
+        return;
+      }
+
+      // Új token generálása
+      const newVerificationToken = crypto.randomBytes(32).toString("hex");
+      const newTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      user.emailVerificationToken = newVerificationToken;
+      user.emailVerificationTokenExpires = newTokenExpires;
+      await user.save();
+
+      // Email küldése
+      const verificationLink = `${
+        process.env.CLIENT_URL || "http://localhost:4200"
+      }/verify-email?token=${newVerificationToken}&userId=${user._id}`;
+
+      try {
+        await sendVerificationEmail(email, verificationLink);
+      } catch (emailError) {
+        console.error("Error sending verification email:", emailError);
+        res.status(500).send("Failed to send verification email");
+        return;
+      }
+
+      res.status(200).send({
+        message: "Verification email resent. Please check your email.",
+        userId: user._id,
+      });
+    } catch (error) {
+      console.error("Resend verification email error:", error);
+      res.status(500).send("Something went wrong");
     }
   }
 );
