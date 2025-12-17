@@ -1,0 +1,76 @@
+.wip-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.wip-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 1px 1px 3px #22a3dd;
+  padding: 60px 40px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.wip-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #22a3dd;
+  font-size: 32px;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.1em;
+}
+
+h2 {
+  color: #5c22dd;
+  font-size: 28px;
+  margin: 0 0 30px 0;
+  font-weight: 600;
+}
+
+p {
+  color: #666;
+  font-size: 16px;
+  margin: 15px 0;
+  line-height: 1.6;
+}
+
+.wip-message {
+  font-size: 18px;
+  color: #22a3dd;
+  margin: 20px 0;
+  font-weight: 500;
+}
+
+.wip-contact {
+  color: #999;
+  font-size: 14px;
+  margin-top: 30px;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .wip-card {
+    padding: 40px 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .wip-icon {
+    font-size: 60px;
+  }
+}

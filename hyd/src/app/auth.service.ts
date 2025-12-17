@@ -3,23 +3,31 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, UserPOST } from './types';
 import { jwtDecode } from 'jwt-decode';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, tap } from 'rxjs';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  http = inject(HttpClient);
-  router = inject(Router);
-  #registerUrl = 'http://localhost:3000/api/register';
-  #loginUrl = 'http://localhost:3000/api/login';
-  isLoggedIn = signal<boolean>(!!localStorage.getItem('token'));
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
-  getToken() {
+  // API URLs from environment configuration
+  private readonly apiBase = environment.apiUrl;
+  private readonly registerUrl = `${this.apiBase}/register`;
+  private readonly loginUrl = `${this.apiBase}/login`;
+  private readonly verifyEmailUrl = `${this.apiBase}/verify-email`;
+  private readonly resendVerificationUrl = `${this.apiBase}/resend-verification-email`;
+
+  readonly isLoggedIn = signal<boolean>(!!localStorage.getItem('token'));
+
+  getToken(): string | null {
     return localStorage.getItem('token');
   }
+
   registerUser(user: UserPOST) {
-    return this.http.post<any>(this.#registerUrl, user).pipe(
+    return this.http.post<any>(this.registerUrl, user).pipe(
       catchError((error) => {
         throw new Error('Registration failed');
       })
@@ -27,8 +35,11 @@ export class AuthService {
   }
 
   loginUser(user: UserPOST) {
-    return this.http.post<any>(this.#loginUrl, user).pipe(
-      tap(() => {
+    return this.http.post<any>(this.loginUrl, user).pipe(
+      tap((response) => {
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
         this.isLoggedIn.set(true);
       }),
       catchError((error) => {
@@ -42,6 +53,22 @@ export class AuthService {
     localStorage.removeItem('token');
     this.isLoggedIn.set(false);
     this.router.navigate(['/auth/login']);
+  }
+
+  verifyEmail(token: string, userId: string) {
+    return this.http.post<any>(this.verifyEmailUrl, { token, userId }).pipe(
+      catchError((error) => {
+        throw new Error('Email verification failed');
+      })
+    );
+  }
+
+  resendVerificationEmail(email: string) {
+    return this.http.post<any>(this.resendVerificationUrl, { email }).pipe(
+      catchError((error) => {
+        throw new Error('Failed to resend verification email');
+      })
+    );
   }
 
   isAdmin(): boolean {

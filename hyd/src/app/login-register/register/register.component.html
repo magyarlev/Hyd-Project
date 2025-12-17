@@ -16,14 +16,63 @@
 
     <mat-form-field>
       <mat-label>Enter your password</mat-label>
-      <input matInput type="password" formControlName="password" required />
+      <input
+        matInput
+        [type]="showPassword() ? 'text' : 'password'"
+        formControlName="password"
+        required
+      />
+      <button
+        class="password-toggle"
+        matSuffix
+        (click)="showPassword.set(!showPassword())"
+        type="button"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="showPassword()"
+      >
+        <mat-icon>{{
+          showPassword() ? "visibility" : "visibility_off"
+        }}</mat-icon>
+      </button>
       @if (registerForm.get('password')?.invalid &&
       registerForm.get('password')?.touched) {
-      <mat-error>Invalid password</mat-error>
+      <mat-error>Password must be at least 6 characters</mat-error>
       }
     </mat-form-field>
-    <span><a href="#">Forgot password?</a></span>
-    <button mat-raised-button type="submit">Register</button>
+
+    <mat-form-field>
+      <mat-label>Confirm your password</mat-label>
+      <input
+        matInput
+        [type]="showConfirmPassword() ? 'text' : 'password'"
+        formControlName="confirmPassword"
+        required
+      />
+      <button
+        class="password-toggle"
+        matSuffix
+        (click)="showConfirmPassword.set(!showConfirmPassword())"
+        type="button"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="showConfirmPassword()"
+      >
+        <mat-icon>{{
+          showConfirmPassword() ? "visibility" : "visibility_off"
+        }}</mat-icon>
+      </button>
+      @if (registerForm.get('confirmPassword')?.hasError('required') &&
+      registerForm.get('confirmPassword')?.touched) {
+      <mat-error>Password confirmation is required</mat-error>
+      } @else if
+      (registerForm.get('confirmPassword')?.hasError('passwordMismatch') &&
+      registerForm.get('confirmPassword')?.touched) {
+      <mat-error>Passwords do not match</mat-error>
+      }
+    </mat-form-field>
+
+    <button mat-raised-button type="submit" [disabled]="registerForm.invalid">
+      Register
+    </button>
     <span>Have an account already? <a routerLink="login">Sign in</a></span>
   </form>
 </div>

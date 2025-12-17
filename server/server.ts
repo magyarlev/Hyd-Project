@@ -1,12 +1,13 @@
 import cors from "cors";
 import express from "express";
+import path from "path";
 import api from "./api/api";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: "http://localhost:4200",
+  origin: process.env.CLIENT_URL || "http://localhost:4200",
   optionsSuccessStatus: 204,
   methods: "GET, POST, PUT, DELETE",
   credentials: true,
@@ -14,7 +15,18 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// API routes
 app.use("/api", api);
+
+// Serve Angular dist folder
+const distPath = path.join(__dirname, "../hyd/dist/hyd/browser");
+app.use(express.static(distPath));
+
+// SPA fallback - serve index.html for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
