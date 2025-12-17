@@ -7,13 +7,14 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { Story, StoryADMIN, StoryDELETE, StoryPOST, StoryPUT } from './types';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StoryService {
   #httpClient = inject(HttpClient);
-  #storyUrl = `http://localhost:3000/api/story`;
+  #storyUrl = `${environment.apiUrl}/story`;
   currentStory: WritableSignal<Story | undefined> = signal<Story | undefined>(
     undefined
   );
