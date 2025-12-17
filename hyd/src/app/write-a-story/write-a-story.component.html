@@ -28,7 +28,14 @@
       @if(!storyForm.get('content')?.valid && storyForm.touched) {
       <mat-error>Please write your story.</mat-error>
       }
-      <button class="submit-btn" mat-raised-button type="submit" [disabled]="storyForm.invalid">Send</button>
+      <button
+        class="submit-btn"
+        mat-raised-button
+        type="submit"
+        [disabled]="storyForm.invalid"
+      >
+        Send
+      </button>
     </form>
   </div>
 </section>
