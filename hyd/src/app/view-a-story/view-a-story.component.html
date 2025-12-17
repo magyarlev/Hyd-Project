@@ -2,15 +2,29 @@
   <h1>Tell me a story!</h1>
 
   <article class="story-wrapper">
-    @if(story) {
     <p>
-      {{ story.content }}
+      @if(story()) {
+      {{ story()?.content }}
+      } @else {
+      {{ "No story available." }}
+      }
     </p>
-    }
   </article>
 
   <div class="btn-wrapper">
-    <button mat-raised-button (click)="getGoodDayStory()">Good day</button>
-    <button mat-raised-button (click)="getBadDayStory()">Bad Day</button>
+    <button
+      id="get-good-story-btn"
+      mat-raised-button
+      (click)="getRandomStory('good')"
+    >
+      Good day
+    </button>
+    <button
+      id="get-bad-story-btn"
+      mat-raised-button
+      (click)="getRandomStory('bad')"
+    >
+      Bad Day
+    </button>
   </div>
 </section>

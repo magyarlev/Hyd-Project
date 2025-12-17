@@ -1,0 +1,44 @@
+<div class="verify-container">
+  <div class="verify-card">
+    <!-- Loading state -->
+    @if (isLoading()) {
+    <div class="verify-loading">
+      <div class="spinner"></div>
+      <h2>{{ message() }}</h2>
+      <p>Please wait while we verify your email address...</p>
+    </div>
+    }
+
+    <!-- Success state -->
+    @if (isSuccess()) {
+    <div class="verify-success">
+      <div class="success-icon">✓</div>
+      <h2>Email Verified!</h2>
+      <p>{{ message() }}</p>
+      <button class="btn-primary" (click)="router.navigate(['/auth/login'])">
+        GO TO LOGIN
+      </button>
+    </div>
+    }
+
+    <!-- Error state -->
+    @if (isError()) {
+    <div class="verify-error">
+      <div class="error-icon">✕</div>
+      <h2>Verification Failed</h2>
+      <p>{{ message() }}</p>
+      <div class="error-actions">
+        <button class="btn-primary" (click)="resendEmail()">
+          RESEND VERIFICATION EMAIL
+        </button>
+        <button
+          class="btn-secondary"
+          (click)="router.navigate(['/auth/login'])"
+        >
+          BACK TO LOGIN
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+</div>

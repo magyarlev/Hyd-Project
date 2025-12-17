@@ -4,16 +4,40 @@ import { ViewAStoryComponent } from './view-a-story/view-a-story.component';
 import { WriteAStoryComponent } from './write-a-story/write-a-story.component';
 import { LoginComponent } from './login-register/login/login.component';
 import { RegisterComponent } from './login-register/register/register.component';
+import { AdminComponent } from './admin/admin.component';
+import { authGuard, adminGuard } from './auth.guard';
+import { DonateComponent } from './donate/donate.component';
+import { AboutComponent } from './about/about.component';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
 
 export const routes: Routes = [
   {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [adminGuard],
+  },
+  {
     path: 'write-a-story',
     component: WriteAStoryComponent,
+    canActivate: [authGuard],
   },
 
   {
     path: 'view-a-story',
     component: ViewAStoryComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'donate',
+    component: DonateComponent,
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
+  },
+  {
+    path: 'verify-email',
+    component: VerifyEmailComponent,
   },
   {
     path: 'auth',

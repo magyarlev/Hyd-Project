@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const Schema = mongoose.Schema;
 const storySchema = new Schema({
-  id: String,
-  email: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
   type: String,
   content: String,
+  status: String,
 });
 
 export default mongoose.model("story", storySchema, "stories");

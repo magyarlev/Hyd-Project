@@ -1,22 +1,86 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from './types';
+import { User, UserPOST } from './types';
+import { jwtDecode } from 'jwt-decode';
+import { catchError, tap } from 'rxjs';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  http = inject(HttpClient);
-  router = inject(Router);
-  #registerUrl = 'http://localhost:3000/api/register';
-  #loginUrl = 'http://localhost:3000/api/login';
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
-  registerUser(user: User) {
-    return this.http.post<any>(this.#registerUrl, user);
+  // API URLs from environment configuration
+  private readonly apiBase = environment.apiUrl;
+  private readonly registerUrl = `${this.apiBase}/register`;
+  private readonly loginUrl = `${this.apiBase}/login`;
+  private readonly verifyEmailUrl = `${this.apiBase}/verify-email`;
+  private readonly resendVerificationUrl = `${this.apiBase}/resend-verification-email`;
+
+  readonly isLoggedIn = signal<boolean>(!!localStorage.getItem('token'));
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
-  loginUser(user: User) {
-    return this.http.post<any>(this.#loginUrl, user);
+  registerUser(user: UserPOST) {
+    return this.http.post<any>(this.registerUrl, user).pipe(
+      catchError((error) => {
+        throw new Error('Registration failed');
+      })
+    );
+  }
+
+  loginUser(user: UserPOST) {
+    return this.http.post<any>(this.loginUrl, user).pipe(
+      tap((response) => {
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+        this.isLoggedIn.set(true);
+      }),
+      catchError((error) => {
+        this.isLoggedIn.set(false);
+        throw new Error('Login failed');
+      })
+    );
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    this.isLoggedIn.set(false);
+    this.router.navigate(['/auth/login']);
+  }
+
+  verifyEmail(token: string, userId: string) {
+    return this.http.post<any>(this.verifyEmailUrl, { token, userId }).pipe(
+      catchError((error) => {
+        throw new Error('Email verification failed');
+      })
+    );
+  }
+
+  resendVerificationEmail(email: string) {
+    return this.http.post<any>(this.resendVerificationUrl, { email }).pipe(
+      catchError((error) => {
+        throw new Error('Failed to resend verification email');
+      })
+    );
+  }
+
+  isAdmin(): boolean {
+    const token = this.getToken();
+    if (token) {
+      try {
+        return jwtDecode<User>(token).role === 'admin';
+      } catch (error) {
+        console.error('Invalid token', error);
+        return false;
+      }
+    }
+    return false;
   }
 }

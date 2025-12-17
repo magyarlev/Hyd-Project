@@ -1,0 +1,35 @@
+h2 {
+  padding: 20px;
+  padding-bottom: 0;
+}
+
+textarea {
+  padding: 10px;
+}
+
+mat-dialog-content {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
+}
+
+.story-input,
+.type-input {
+  flex-direction: column;
+  display: flex;
+  gap: 20px;
+  padding: 0;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+}
