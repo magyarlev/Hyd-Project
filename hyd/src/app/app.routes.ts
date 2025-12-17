@@ -5,7 +5,7 @@ import { WriteAStoryComponent } from './write-a-story/write-a-story.component';
 import { LoginComponent } from './login-register/login/login.component';
 import { RegisterComponent } from './login-register/register/register.component';
 import { AdminComponent } from './admin/admin.component';
-import { authGuard } from './auth.guard';
+import { authGuard, adminGuard } from './auth.guard';
 import { DonateComponent } from './donate/donate.component';
 import { AboutComponent } from './about/about.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [authGuard],
+    canActivate: [adminGuard],
   },
   {
     path: 'write-a-story',

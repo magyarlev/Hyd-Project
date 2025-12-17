@@ -212,7 +212,7 @@ router.get(
           _id: story._id,
           type: story.type,
           content: story.content,
-          email: story.author.email,
+          email: story.author?.email || "N/A",
           status: story.status,
         }));
         res.status(200).json(response);
