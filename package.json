@@ -1,0 +1,12 @@
+{
+  "name": "hyd-full-app",
+  "version": "1.0.0",
+  "description": "Full-stack Hyd application with Angular frontend and Express backend",
+  "scripts": {
+    "build": "cd hyd && npm install && npm run build && cd ../server && npm install && cd ..",
+    "start": "npm run build && cd server && npm start"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
