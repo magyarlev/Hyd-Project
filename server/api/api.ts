@@ -95,9 +95,15 @@ router.get("/", (req: Request, res: Response) => {
 router.post("/register", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400).send({ message: "Email and password are required" });
+      return;
+    }
+
     const existingUser = await User.find({ email });
     if (existingUser.length > 0) {
-      res.status(401).send("User already exists");
+      res.status(409).send({ message: "User already exists" });
       return;
     }
     const hashedPassword = await bcrypt.hash(password, 10);

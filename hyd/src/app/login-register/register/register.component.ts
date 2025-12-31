@@ -84,7 +84,7 @@ export class RegisterComponent {
           error: (err) => {
             this.isLoading.set(false);
             console.error(err);
-            this.openSnackBar(err);
+            this.openSnackBar(err?.message || 'Registration failed');
           },
         });
     }

@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, UserPOST } from './types';
 import { jwtDecode } from 'jwt-decode';
-import { catchError, tap } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -29,7 +29,13 @@ export class AuthService {
   registerUser(user: UserPOST) {
     return this.http.post<any>(this.registerUrl, user).pipe(
       catchError((error) => {
-        throw new Error('Registration failed');
+        const message =
+          (typeof error?.error === 'string' && error.error) ||
+          error?.error?.message ||
+          error?.message ||
+          'Registration failed';
+
+        return throwError(() => new Error(message));
       })
     );
   }
@@ -44,7 +50,13 @@ export class AuthService {
       }),
       catchError((error) => {
         this.isLoggedIn.set(false);
-        throw new Error('Login failed');
+        const message =
+          (typeof error?.error === 'string' && error.error) ||
+          error?.error?.message ||
+          error?.message ||
+          'Login failed';
+
+        return throwError(() => new Error(message));
       })
     );
   }
@@ -58,7 +70,13 @@ export class AuthService {
   verifyEmail(token: string, userId: string) {
     return this.http.post<any>(this.verifyEmailUrl, { token, userId }).pipe(
       catchError((error) => {
-        throw new Error('Email verification failed');
+        const message =
+          (typeof error?.error === 'string' && error.error) ||
+          error?.error?.message ||
+          error?.message ||
+          'Email verification failed';
+
+        return throwError(() => new Error(message));
       })
     );
   }
@@ -66,7 +84,13 @@ export class AuthService {
   resendVerificationEmail(email: string) {
     return this.http.post<any>(this.resendVerificationUrl, { email }).pipe(
       catchError((error) => {
-        throw new Error('Failed to resend verification email');
+        const message =
+          (typeof error?.error === 'string' && error.error) ||
+          error?.error?.message ||
+          error?.message ||
+          'Failed to resend verification email';
+
+        return throwError(() => new Error(message));
       })
     );
   }
