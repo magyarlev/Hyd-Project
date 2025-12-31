@@ -8,17 +8,43 @@ const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || "smtp.gmail.com",
   port: parseInt(process.env.EMAIL_PORT || "587"),
   secure: process.env.EMAIL_SECURE === "true", // true for 465, false for other ports
+  connectionTimeout: 10_000,
+  greetingTimeout: 10_000,
+  socketTimeout: 20_000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
 });
 
+// Log early if SMTP is unreachable/misconfigured (does not log secrets).
+void transporter.verify().then(
+  () => {
+    const host = process.env.EMAIL_HOST || "smtp.gmail.com";
+    const port = process.env.EMAIL_PORT || "587";
+    console.log(`SMTP transporter verified (host=${host} port=${port})`);
+  },
+  (err) => {
+    const host = process.env.EMAIL_HOST || "smtp.gmail.com";
+    const port = process.env.EMAIL_PORT || "587";
+    console.error(
+      `SMTP transporter verify failed (host=${host} port=${port}):`,
+      err
+    );
+  }
+);
+
 export const sendVerificationEmail = async (
   email: string,
   verificationLink: string
 ) => {
   try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      throw new Error(
+        "Email is not configured (EMAIL_USER/EMAIL_PASSWORD missing)."
+      );
+    }
+
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: email,
@@ -54,7 +80,12 @@ export const sendVerificationEmail = async (
     console.log(`Verification email sent to ${email}`);
     return true;
   } catch (error) {
-    console.error("Error sending verification email:", error);
+    const host = process.env.EMAIL_HOST || "smtp.gmail.com";
+    const port = process.env.EMAIL_PORT || "587";
+    console.error(
+      `Error sending verification email (host=${host} port=${port}):`,
+      error
+    );
     throw error;
   }
 };

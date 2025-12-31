@@ -127,22 +127,15 @@ router.post("/register", async (req: Request, res: Response) => {
       process.env.CLIENT_URL || "http://localhost:4200"
     }/verify-email?token=${verificationToken}&userId=${savedUser._id}`;
 
-    try {
-      await sendVerificationEmail(email, verificationLink);
-    } catch (emailError) {
+    // IMPORTANT: Do not block the HTTP response on SMTP.
+    // SMTP providers / hosting can time out; the UI should still proceed.
+    void sendVerificationEmail(email, verificationLink).catch((emailError) => {
       console.error("Email sending failed:", emailError);
-      // Email küldés sikertelen, de a felhasználó regisztrálva van
-      res.status(201).send({
-        message:
-          "User registered, but verification email could not be sent. Please try again later.",
-        userId: savedUser._id,
-      });
-      return;
-    }
+    });
 
     res.status(201).send({
       message:
-        "User registered successfully. Please check your email to verify your account.",
+        "User registered successfully. Please check your email to verify your account. If you don't receive it, use resend verification.",
       userId: savedUser._id,
     });
   } catch (error) {
