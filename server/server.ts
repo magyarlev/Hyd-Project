@@ -1,7 +1,11 @@
 import cors from "cors";
 import express from "express";
 import path from "path";
+import dotenv from "dotenv";
 import api from "./api/api";
+
+// Load environment variables at the very start
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
