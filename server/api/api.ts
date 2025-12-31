@@ -12,6 +12,7 @@ import {
 
 const router = express.Router();
 const db = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DBNAME || "how-is-your-day";
 
 if (!db) {
   throw new Error(
@@ -24,9 +25,9 @@ export interface CustomRequest extends Request {
 }
 
 mongoose
-  .connect(db)
+  .connect(db, { dbName })
   .then(() => {
-    console.log("Connected to mongodb");
+    console.log(`Connected to mongodb (dbName=${dbName})`);
   })
   .catch((error) => {
     console.error(error);
