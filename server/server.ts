@@ -3,12 +3,12 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 
+dotenv.config({ path: "/etc/secrets/.env" });
+dotenv.config({ path: ".env" });
+
 // IMPORTANT: load env vars before requiring modules that read process.env at import time.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const api = require("./api/api").default;
-
-dotenv.config({ path: "/etc/secrets/.env" });
-dotenv.config({ path: ".env" });
 
 const app = express();
 const port = process.env.PORT || 3000;
