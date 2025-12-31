@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Full-stack Hyd application with Angular frontend and Express backend",
   "scripts": {
-    "build": "cd hyd && npm install && npm run build && cd ../server && npm install && cd ..",
+    "build": "cd hyd && npm install && npx ng build && cd ../server && npm install && cd ..",
     "start": "npm run build && cd server && npm start"
   },
   "engines": {
