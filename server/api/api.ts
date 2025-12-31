@@ -11,8 +11,7 @@ import {
 } from "../services/emailService";
 
 const router = express.Router();
-const db =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/how-is-your-day";
+const db = process.env.MONGODB_URI || "mongodb://0.0.0.0:27017/how-is-your-day";
 export interface CustomRequest extends Request {
   token?: string;
   userId?: string;
