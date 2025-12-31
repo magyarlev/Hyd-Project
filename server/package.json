@@ -2,8 +2,7 @@
   "name": "hyd-server",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "ts-node --transpile-only server.ts",
     "dev": "ts-node server.ts"
   },
   "dependencies": {
