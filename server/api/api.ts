@@ -3,15 +3,12 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 import Story from "../modules/story";
 import User from "../modules/users";
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import {
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../services/emailService";
-
-dotenv.config();
 
 const router = express.Router();
 const db =

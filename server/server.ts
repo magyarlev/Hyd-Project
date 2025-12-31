@@ -4,8 +4,8 @@ import path from "path";
 import dotenv from "dotenv";
 import api from "./api/api";
 
-// Load environment variables at the very start
-dotenv.config();
+dotenv.config({ path: "/etc/secrets/.env" });
+dotenv.config({ path: ".env" });
 
 const app = express();
 const port = process.env.PORT || 3000;
