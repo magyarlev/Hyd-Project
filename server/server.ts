@@ -2,7 +2,38 @@ import cors from "cors";
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import api from "./api/api";
+
+import fs from "fs";
+
+const loadEnv = () => {
+  // Render Secret Files are mounted under /etc/secrets/<filename>
+  // Prefer /etc/secrets/.env if present, otherwise load all files in /etc/secrets.
+  const secretsDir = "/etc/secrets";
+  const preferredSecretEnv = "/etc/secrets/.env";
+
+  if (fs.existsSync(preferredSecretEnv)) {
+    dotenv.config({ path: preferredSecretEnv });
+  } else if (fs.existsSync(secretsDir)) {
+    const secretFiles = fs
+      .readdirSync(secretsDir, { withFileTypes: true })
+      .filter((entry) => entry.isFile())
+      .map((entry) => path.join(secretsDir, entry.name));
+
+    for (const secretFile of secretFiles) {
+      dotenv.config({ path: secretFile });
+    }
+  }
+
+  // Local dev fallback (repo root or server folder, depending on how it's started)
+  dotenv.config({ path: ".env" });
+  dotenv.config({ path: "../.env" });
+};
+
+loadEnv();
+
+// IMPORTANT: load env vars before requiring modules that read process.env at import time.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const api = require("./api/api").default;
 
 dotenv.config({ path: "/etc/secrets/.env" });
 dotenv.config({ path: ".env" });

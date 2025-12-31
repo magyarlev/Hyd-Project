@@ -11,7 +11,13 @@ import {
 } from "../services/emailService";
 
 const router = express.Router();
-const db = process.env.MONGODB_URI || "mongodb://0.0.0.0:27017/how-is-your-day";
+const db = process.env.MONGODB_URI;
+
+if (!db) {
+  throw new Error(
+    "MONGODB_URI is not set. On Render, set it as a Private env var, or upload a Secret File under /etc/secrets/.env containing MONGODB_URI=..."
+  );
+}
 export interface CustomRequest extends Request {
   token?: string;
   userId?: string;
