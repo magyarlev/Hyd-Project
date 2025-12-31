@@ -29,5 +29,9 @@ app.get("*", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+  const env = process.env.NODE_ENV || "development";
+  const clientUrl = process.env.CLIENT_URL || "http://localhost:4200";
+  console.log(`Server running in ${env} mode`);
+  console.log(`Server listening on port ${port}`);
+  console.log(`Frontend URL: ${clientUrl}`);
 });

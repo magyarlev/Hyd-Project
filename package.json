@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Full-stack Hyd application with Angular frontend and Express backend",
   "scripts": {
-    "build": "cd hyd && npm install && npx ng build && cd ../server && npm install && cd ..",
-    "start": "npm run build && cd server && npm start"
+    "build": "cd hyd && npm install && NODE_OPTIONS=\"--max-old-space-size=512\" npx ng build && cd ../server && npm install && cd ..",
+    "start": "cd server && npm start"
   },
   "engines": {
     "node": ">=18.0.0"
